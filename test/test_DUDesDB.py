@@ -42,5 +42,9 @@ def test_DUDesDB(tmp_path):
         with patch.object(sys, "argv", args_str):
             with patch.object(dudes.database.main, "VERSION", "0.09"):
                 main()
-    assert md5sum(produced_db) == md5sum(expected_db), \
-        'wrong dudes database file produced'
+                
+    expected = np.load(expected_db, allow_pickle=True)
+    produced = np.load(produced_db, allow_pickle=True)
+    assert produced.files == expected.files
+    for f in expected.files:
+        assert np.array_equal(expected[f], produced[f])
